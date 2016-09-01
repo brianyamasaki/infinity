@@ -3,4 +3,5 @@
  */
 export * from './home.component';
 export * from './home.routes';
+export * from './infinity-loop.component';
 

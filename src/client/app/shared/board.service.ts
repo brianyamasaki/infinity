@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TileService, Tile, TileConnection } from './tile.service';
+import { TileService, Tile, TileConnection } from '../shared/tile.service';
 import { BoardData } from './board.interface';
 import { LevelsService} from '../shared/levels.service';
 import * as _ from 'lodash';

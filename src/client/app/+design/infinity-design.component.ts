@@ -9,32 +9,30 @@ import { LevelsService} from '../shared/levels.service';
  */
 @Component({
   moduleId: module.id,
-  selector: 'infinity-canvas',
-  template: '<canvas id="infinity-canvas" width="400" height="400" touch-action></canvas>',
-  styleUrls: ['infinity-loop.component.css'],
+  selector: 'infinity-design',
+  template: '<canvas id="infinity-design-canvas" width="400" height="400" touch-action></canvas>',
+  styles: [
+    `
+    #infinity-design-canvas {
+      border:1px solid black;
+    }
+    `
+  ],
   providers: [ BoardService, TileService, LevelsService ]
 })
 
-export class InfinityCanvasComponent implements OnInit {
-
+export class InfinityDesignCanvasComponent implements OnInit {
   canvas: HTMLCanvasElement;
-  boardData: BoardData;
   context: CanvasRenderingContext2D;
-  tileSize = 50;
-  self = this;
+  boardData: BoardData;
 
-  constructor(public elem: ElementRef,
-              public board: BoardService) {
-  }
-
-  /**
-   * Get the names OnInit
-   */
+  constructor(public board: BoardService) {}
+  
   ngOnInit() {
     let self = this,
       tileSize = 50;
 
-    this.canvas = <HTMLCanvasElement>document.getElementById('infinity-canvas');
+    this.canvas = <HTMLCanvasElement>document.getElementById('infinity-design-canvas');
     if (this.canvas && this.canvas.getContext) {
       this.context = this.canvas.getContext('2d');
       this.boardData = {
@@ -44,7 +42,7 @@ export class InfinityCanvasComponent implements OnInit {
         tileSize: tileSize,
         xTiles: this.canvas.width / tileSize,
         yTiles: this.canvas.height / tileSize,
-        drawGrid: false,
+        drawGrid: true,
         dtWinAnimation: 400
       };
 
@@ -68,5 +66,4 @@ export class InfinityCanvasComponent implements OnInit {
       });
     }
   }
-
 }

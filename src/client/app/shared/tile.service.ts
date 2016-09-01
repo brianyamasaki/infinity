@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BoardData } from './board.interface';
+import { BoardData } from '../+home/board.interface';
 
 export class Tile {
   tileType: number;
