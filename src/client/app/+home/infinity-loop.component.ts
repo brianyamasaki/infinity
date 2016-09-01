@@ -31,11 +31,7 @@ export class InfinityCanvasComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
-    let x: number,
-      y: number,
-      i: number,
-      boardData = this.boardData,
-      self = this;
+    let self = this;
 
     this.canvas = <HTMLCanvasElement>document.getElementById('infinity-canvas');
     if (this.canvas && this.canvas.getContext) {
@@ -47,26 +43,27 @@ export class InfinityCanvasComponent implements OnInit {
         tileSize: 50,
         xTiles: 600 / 50,
         yTiles: 600 / 50,
-        drawGrid: false
+        drawGrid: false,
+        dtWinAnimation: 400
       };
 
       this.board.init(this.boardData);
-      this.board.loadLevel(1);
+      this.board.loadLevel();
 
       function drawFrame(t: number) {
-
+        let tNow = new Date().getTime();
         window.requestAnimationFrame(drawFrame);
-        self.board.draw(t);
+        self.board.animate(tNow);
+        self.board.draw(tNow);
       }
 
       window.requestAnimationFrame(drawFrame);
 
 
-      this.canvas.addEventListener('pointerdown', (event) =>{
-        let xTile = Math.floor((event.x - this.canvas.offsetLeft)/ this.tileSize),
-          yTile = Math.floor((event.y - this.canvas.offsetTop) / this.tileSize);
-        
-        this.board.tapTile(xTile, yTile);
+      this.canvas.addEventListener('pointerdown', (event) => {
+
+        this.board.tapTile(event.x - this.canvas.offsetLeft,
+            event.y - this.canvas.offsetTop);
       });
     }
   }

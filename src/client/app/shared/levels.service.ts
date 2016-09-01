@@ -5,6 +5,12 @@ export class LevelsService {
   levels = [
     {
       level: 0,
+      colors: {
+        background: '#E4E8D1',
+        foreground: '#889456',
+        wonBackground: '#2a3304',
+        wonForeground: '#CEF824',
+      },
       tiles: [
         {
           type: 3,
@@ -46,6 +52,12 @@ export class LevelsService {
     },
     {
       level: 1,
+      colors: {
+        background: '#E4E8D1',
+        foreground: '#889456',
+        wonBackground: '#2a3304',
+        wonForeground: '#CEF824',
+      },
       tiles: [
         {
           type: 3,
@@ -69,7 +81,7 @@ export class LevelsService {
           type: 3,
           row: 2,
           column: 5,
-          rotation: 3
+          rotation: 2
         },
         {
           type: 4,

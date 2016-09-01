@@ -6,5 +6,6 @@ export class BoardData {
   tileSize: number;
   context: CanvasRenderingContext2D;
   drawGrid: boolean;
+  dtWinAnimation: number;
 }
 

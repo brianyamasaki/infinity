@@ -10,12 +10,27 @@ class TileNeighbors {
   bottom: number;
   left: number;
 }
+enum GameMode {
+  play = 1,
+  winAnimation,
+  won
+}
 
 @Injectable()
 export class BoardService {
   boardData: BoardData;
   tiles: Tile[];
   timeout: number;
+  curLevel = 0;
+  gameMode = GameMode.play;
+  colors = {
+    foreground: '#333333',
+    background: '#cccccc',
+    wonForeground: '#aaaaaa',
+    wonBackground: '#666666'
+  };
+  tap:any;
+  tAnimationStart: number;
 
   constructor(public tileService: TileService,
     public levelsService: LevelsService) {}
@@ -26,37 +41,64 @@ export class BoardService {
     this.tileService.init(boardData);
   }
 
-  loadLevel(i : number) {
-    let level = this.levelsService.getLevel(i);
-    level.tiles.forEach((tile) => {
-      this.setTile(tile.column, tile.row, tile.type, tile.rotation);
-    });
+  loadLevel() {
+    let level = this.levelsService.getLevel(this.curLevel);
+    if (level) {
+      level.tiles.forEach((tile) => {
+        this.setTile(tile.column, tile.row, tile.type, tile.rotation);
+      });
+      if (level.colors) {
+        this.colors = level.colors;
+      }
+    } else {
+      alert('No more levels');
+    }
   }
 
   setTile(xTile:number, yTile: number, tileType: number, iRot: number) {
     this.tiles[yTile * this.boardData.xTiles + xTile] = this.tileService.createTile(tileType, iRot);
   }
 
-  tapTile(xTile: number, yTile: number) {
-    let tile = this.tiles[yTile * this.boardData.xTiles + xTile],
+  tapTile(xClick: number, yClick: number) {
+    let tileSize = this.boardData.tileSize,
+      xTile = Math.floor(xClick/ tileSize),
+      yTile = Math.floor(yClick / tileSize),
+      tile = this.tiles[yTile * this.boardData.xTiles + xTile],
       self = this;
-    this.tileService.tap(tile);
-    if (this.timeout !== undefined) {
-      window.clearTimeout(this.timeout);
+
+    switch(this.gameMode) {
+      case GameMode.won:
+        this.curLevel++;
+        this.gameMode = GameMode.play;
+        this.loadLevel();
+        break;
+      case GameMode.play:
+        this.tileService.tap(tile);
+        if (this.timeout !== undefined) {
+          window.clearTimeout(this.timeout);
+        }
+        this.timeout = window.setTimeout(() => {
+          this.timeout = undefined;
+          if (self.checkForWin()) {
+            this.gameMode = GameMode.winAnimation;
+            this.tAnimationStart = new Date().getTime();
+          }
+        }, 200);
+        this.tap = {
+          x: xClick,
+          y: yClick
+        };
+        break;
+      default:
+        break;
     }
-    this.timeout = window.setTimeout(() => {
-      this.timeout = undefined;
-      if (self.checkForWin()) {
-        alert('you win');
-      }
-    }, 200);
   }
 
   tileNeighbors(i:number) : TileNeighbors {
     let xTiles = this.boardData.xTiles,
       x = i % xTiles,
       y = Math.floor(i / xTiles);
-    
+
     return {
       top:  y === 0 ? undefined : i - xTiles,
       right: (x === xTiles - 1) ? undefined : i + 1,
@@ -91,18 +133,52 @@ export class BoardService {
     return win;
   }
 
+  animate(t: number) {
+    switch (this.gameMode) {
+      case GameMode.winAnimation:
+        if (t - this.tAnimationStart > this.boardData.dtWinAnimation) {
+          this.gameMode = GameMode.won;
+        }
+        break;
+    }
+  }
+
   draw(t: number) {
     let boardData = this.boardData;
     let ctx = boardData.context;
 
     // erase board
-    ctx.save();
-    ctx.fillStyle = '#ffffff';
+    switch(this.gameMode) {
+      case GameMode.play:
+      case GameMode.winAnimation:
+        ctx.fillStyle = this.colors.background;
+        ctx.strokeStyle = this.colors.foreground;
+        break;
+      case GameMode.won:
+        ctx.fillStyle = this.colors.wonBackground;
+        ctx.strokeStyle = this.colors.wonForeground;
+        break;
+    }
     ctx.fillRect(0,0, 600, 600);
+
+    if (this.gameMode === GameMode.winAnimation) {
+      ctx.save();
+      ctx.fillStyle = this.colors.wonBackground;
+      ctx.beginPath();
+      ctx.arc(this.tap.x, 
+          this.tap.y, 
+          (t - this.tAnimationStart) / boardData.dtWinAnimation * boardData.height,
+          0, 
+          Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
 
     // draw gridlines
     if (boardData.drawGrid) {
       let x: number, y: number;
+
+      ctx.save(); 
       ctx.fillStyle = "#cccccc"
       for(x=0; x <= boardData.width; x += boardData.tileSize) {
         ctx.fillRect(x, 0, 1, boardData.height);
@@ -110,8 +186,8 @@ export class BoardService {
       for (y=0; y <= boardData.height; y += boardData.tileSize) {
         ctx.fillRect(0, y, boardData.width, 1);
       }
+      ctx.restore();
     }
-    ctx.restore();
 
     // draw tiles
     this.tiles.forEach((tile, i) => {
