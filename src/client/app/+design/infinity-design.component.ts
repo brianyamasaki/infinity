@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
-import { BoardData } from '../shared/board.interface';
+import { BoardData, BoardGameMode } from '../shared/board.interface';
 import { BoardService } from '../shared/board.service';
 import { TileService} from '../shared/tile.service';
 import { LevelsService} from '../shared/levels.service';
@@ -39,15 +39,29 @@ export class InfinityDesignCanvasComponent implements OnInit {
         context: this.context,
         height: this.canvas.height,
         width: this.canvas.width,
+        boardMargins: {
+          top:0,
+          left: 0,
+          bottom: 0,
+          right: 0
+        },
+        boardColors: {
+          foreground: '#333333',
+          background: '#cccccc',
+          wonForeground: '#aaaaaa',
+          wonBackground: '#666666',
+          gridlines: '#999999'
+        },
         tileSize: tileSize,
         xTiles: this.canvas.width / tileSize,
         yTiles: this.canvas.height / tileSize,
         drawGrid: true,
+        boardGameMode: BoardGameMode.design,
+        startLevel: 0,
         dtWinAnimation: 400
       };
 
       this.board.init(this.boardData);
-      this.board.loadLevel();
 
       function drawFrame(t: number) {
         let tNow = new Date().getTime();

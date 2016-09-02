@@ -10,6 +10,7 @@ export class LevelsService {
         foreground: '#889456',
         wonBackground: '#2a3304',
         wonForeground: '#CEF824',
+        gridlines: '#999999'
       },
       tiles: [
         {
@@ -57,6 +58,7 @@ export class LevelsService {
         foreground: '#889456',
         wonBackground: '#2a3304',
         wonForeground: '#CEF824',
+        gridlines: '#999999'
       },
       tiles: [
         {

@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-import { BoardData } from '../+home/board.interface';
+import { BoardData } from '../shared/board.interface';
 
-export class Tile {
+export interface Tile {
   tileType: number;
   rotationCur: number;
   iRotation: number;
+  color?: string;
+  background?: string;
+  isSelected?: boolean;
 }
 
 export interface TileConnection {
@@ -204,12 +207,19 @@ export class TileService {
     this.boardData = boardData;
   }
 
-  createTile(tileType: number, iRot: number) : Tile {
-    return {
+  createTile(tileType: number, iRot: number, color?:string, background?:string) : Tile {
+    let tile : Tile = {
       tileType: tileType,
       rotationCur: this.mpiRotRotation[iRot],
-      iRotation: iRot
-    };
+      iRotation: iRot,
+    }
+    if (color) {
+      tile.color = color;
+    }
+    if (background) {
+      tile.background = background;
+    }
+    return tile;
   }
 
   tap(tile: Tile) {
@@ -258,11 +268,31 @@ export class TileService {
       return;
     }
     context.save();
-    context.translate(xTile * boardData.tileSize + halfTile, yTile * boardData.tileSize + halfTile);
+    context.translate(
+      boardData.boardMargins.left + xTile * boardData.tileSize + halfTile, 
+      boardData.boardMargins.top + yTile * boardData.tileSize + halfTile);
     context.rotate(tile.rotationCur);
     context.lineWidth = 2;
+    if (tile.color) {
+      context.strokeStyle = tile.color;
+    }
+    if (tile.background) {
+      context.fillStyle = tile.background;
+      if (!tile.isSelected) {
+        context.fillRect(-halfTile, -halfTile, boardData.tileSize, boardData.tileSize);
+      }
+      context.strokeRect(-halfTile, -halfTile, boardData.tileSize, boardData.tileSize);
+    }
     context.beginPath();
+    // we pretend to draw on a tile centered on 0,0 - the translate and rotate will draw where we want it
     switch(tile.tileType) {
+      case -1:
+        context.fillStyle = context.strokeStyle;
+        context.font = '30px glyphicon';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(String.fromCharCode(0xe221), 0, 0);
+        break;
       case 0:
         break;
       case 1:

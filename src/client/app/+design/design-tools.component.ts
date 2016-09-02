@@ -1,37 +1,31 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BoardData, BoardGameMode } from '../shared/board.interface';
 import { BoardService } from '../shared/board.service';
-import { TileService} from '../shared/tile.service';
-import { LevelsService} from '../shared/levels.service';
 
-/**
- * This class represents the lazy loaded HomeComponent.
- */
 @Component({
   moduleId: module.id,
-  selector: 'infinity-canvas',
-  template: '<canvas id="infinity-canvas" width="400" height="400" touch-action></canvas>',
-  styleUrls: ['infinity-loop.component.css'],
-  providers: [ BoardService, TileService, LevelsService ]
+  selector: 'design-tools',
+  templateUrl: 'design-tools.component.html',
+  styleUrls: ['design-tools.component.css'],
+  directives: [],
 })
 
-export class InfinityCanvasComponent implements OnInit {
-
+export class DesignToolsComponent implements OnInit {
   canvas: HTMLCanvasElement;
   boardData: BoardData;
   context: CanvasRenderingContext2D;
 
-  constructor(public board: BoardService) {
-  }
+  constructor(public board: BoardService)
+  {}
 
-  /**
-   * Get the names OnInit
-   */
   ngOnInit() {
     let self = this,
-      tileSize = 50;
+      tileSize = 50,
+      color = '#333399',
+      background = '#6699ff',
+      board = this.board;
 
-    this.canvas = <HTMLCanvasElement>document.getElementById('infinity-canvas');
+    this.canvas = <HTMLCanvasElement>document.getElementById('design-tools-canvas');
     if (this.canvas && this.canvas.getContext) {
       this.context = this.canvas.getContext('2d');
       this.boardData = {
@@ -39,28 +33,35 @@ export class InfinityCanvasComponent implements OnInit {
         height: this.canvas.height,
         width: this.canvas.width,
         boardMargins: {
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0
+          top: 2,
+          left: 50,
+          bottom: 2,
+          right: 50
         },
         boardColors: {
           foreground: '#333333',
-          background: '#cccccc',
+          background: '#ffffff',
           wonForeground: '#aaaaaa',
           wonBackground: '#666666',
-          gridlines: '#999999'
+          gridlines: '#333333'
         },
         tileSize: tileSize,
-        xTiles: this.canvas.width / tileSize,
-        yTiles: this.canvas.height / tileSize,
+        xTiles: 6,
+        yTiles: 1,
         drawGrid: false,
-        boardGameMode: BoardGameMode.play,
+        boardGameMode: BoardGameMode.toolbar,
         startLevel: 0,
         dtWinAnimation: 400
       };
 
-      this.board.init(this.boardData);
+      board.init(this.boardData);
+
+      board.setTile(0, 0, 1, 0, color, background);
+      board.setTile(1, 0, 2, 0, color, background);
+      board.setTile(2, 0, 3, 0, color, background);
+      board.setTile(3, 0, 4, 0, color, background);
+      board.setTile(4, 0, 6, 0, color, background);
+      board.setTile(5, 0, -1, 0, color, background);
 
       function drawFrame(t: number) {
         let tNow = new Date().getTime();

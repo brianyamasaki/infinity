@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'glyphicon';
+  src: url('node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+      url('node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2') format('woff2'), /* Super Modern Browsers */
+      url('node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff') format('woff'), /* Pretty Modern Browsers */
+      url('node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf')  format('truetype'), /* Safari, Android, iOS */
+      url('node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.svg#svgFontName') format('svg'); /* Legacy iOS */
+}

@@ -12,7 +12,7 @@ export class ProjectConfig extends SeedConfig {
 
   constructor() {
     super();
-    this.APP_TITLE = 'Infinity Loop Clone';
+    this.APP_TITLE = 'Infinity Loop';
 
     /* Enable typeless compiler runs (faster) between typed compiler runs. */
     this.TYPED_COMPILE_INTERVAL = 5;
@@ -22,7 +22,8 @@ export class ProjectConfig extends SeedConfig {
       ...this.NPM_DEPENDENCIES,
       // {src: 'jquery/dist/jquery.min.js', inject: 'libs'},
       {src: 'lodash/lodash.min.js', inject: 'libs'},
-      {src: 'pepjs/dist/pep.min.js', inject: 'libs'}
+      {src: 'pepjs/dist/pep.min.js', inject: 'libs'},
+      {src: 'bootstrap/dist/css/bootstrap.css', inject: true},
     ];
 
     // Add `local` third-party libraries to be injected/bundled.
